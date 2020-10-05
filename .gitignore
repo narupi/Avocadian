@@ -1,0 +1,7 @@
+token.pickle
+__pycache__/
+bot/
+.idea
+credentials.json
+
+
