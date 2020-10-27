@@ -1,4 +1,4 @@
-from __future__ import print_function
+from discord.ext import commands
 import datetime
 import pickle
 import os.path
@@ -7,11 +7,9 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
-
-class GoogleCalendar:
-    service = None
-
-    def __init__(self):
+class CalendarCmdCog(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
         self.credentials = self.load_credentials()
         self.service = build('calendar', 'v3', credentials=self.credentials)
 
@@ -37,7 +35,12 @@ class GoogleCalendar:
     def change_date_format(self, date):
         return datetime.datetime.strptime(date, '%Y-%m-%d').isoformat()+'Z'
 
-    def add_event(self, summary, location, description, start, end):
+
+    @commands.command()
+    async def register(self, ctx, *args):
+        await ctx.send("tourokusita")
+        summary, location, description, start, end = args[0].split(',')
+
         event = {
                 'summary': '{}'.format(summary),
                 'location': '{}'.format(location),
@@ -52,4 +55,8 @@ class GoogleCalendar:
                     },
                 }
         print(event)
-        result = self.service.events().insert(calendarId='', body=event).execute()
+#        result = self.service.events().insert(calendarId='', body=event).execute()
+
+
+def setup(bot):
+    bot.add_cog(CalendarCmdCog(bot))
