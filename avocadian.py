@@ -1,9 +1,11 @@
 import discord
-
-from Calender import Calender
+from googlecalendar import GoogleCalendar
 
 
 class Avocadian(discord.Client):
+    def __init__(self, cal: GoogleCalendar):
+        self.cal = cal
+
     async def on_ready(self):
         print('Logged on as', self.user)
 
@@ -23,3 +25,4 @@ class Avocadian(discord.Client):
             if command == '/reg':
                 summary, location, description, start, end = message.content[5:].split(',')
                 print(summary, location, description, start, end)
+                cal.add_event()
