@@ -71,6 +71,21 @@ class CalendarCmdCog(commands.Cog):
         except ValueError:
             await ctx.send("Hint: /register SUMMARY,LOCATION,DESCRIPTION,YY/MM/DD-HH:MM,YY/MM/DD-HH:MM")
 
+    @commands.command()
+    async def event(self, ctx):
+        now = datetime.datetime.now().isoformat() + "+09:00"
+        events_result = self.service.events().list(calendarId=self.calendarId, timeMin=now,
+            maxResults=50, singleEvents=True,
+            orderBy='startTime').execute()
+        events = events_result.get('items', [])
+
+        if not events:
+            await ctx.send('No upcoming events.')
+        for event in events:
+            start = event['start'].get('dateTime', event['start'].get('date'))
+            message = event['summary']+" ("+event['description']+" ["+event['location']+"]) : "+start+"  "+event['id']
+            await ctx.send(message)
+
 
 
 def setup(bot):
