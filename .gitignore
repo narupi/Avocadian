@@ -3,5 +3,4 @@ __pycache__/
 bot/
 .idea
 credentials.json
-
-
+config.ini
