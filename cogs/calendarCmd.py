@@ -7,6 +7,8 @@ import configparser
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+from googleapiclient.errors import HttpError
+
 
 class CalendarCmdCog(commands.Cog):
     def __init__(self, bot):
@@ -65,8 +67,10 @@ class CalendarCmdCog(commands.Cog):
             try: 
                 result = self.service.events().insert(calendarId=self.calendarId, body=event).execute()
                 await ctx.send("Event id: "+result['id'])
-            except Exception as e:
-                await ctx.send("Registration Error\n"+e)
+            except HttpError as e:
+                print(e)
+                await ctx.send("Registration error")
+                await ctx.send("Hint: /register SUMMARY,LOCATION,DESCRIPTION,YY/MM/DD-HH:MM,YY/MM/DD-HH:MM")
 
         except ValueError:
             await ctx.send("Hint: /register SUMMARY,LOCATION,DESCRIPTION,YY/MM/DD-HH:MM,YY/MM/DD-HH:MM")
@@ -85,6 +89,23 @@ class CalendarCmdCog(commands.Cog):
             start = event['start'].get('dateTime', event['start'].get('date'))
             message = event['summary']+" ("+event['description']+" ["+event['location']+"]) : "+start+"  "+event['id']
             await ctx.send(message)
+
+    @commands.command()
+    async def delete(self, ctx, *args):
+        if len(args) != 1:
+            await ctx.send("Hint: /delete EVENT_ID")
+        else :
+            eventId = args[0]
+            try:
+                event = self.service.events().get(calendarId=self.calendarId, eventId=eventId).execute()
+                self.service.events().delete(calendarId=self.calendarId, eventId=eventId).execute()
+                start = event['start'].get('dateTime', event['start'].get('date'))
+                message = event['summary']+" ("+event['description']+" ["+event['location']+"]) : "+start
+                await ctx.send("Delete event : "+message)
+            except HttpError as e:
+                print(e)
+                await ctx.send("Delete error")
+                await ctx.send("Hint: /delete EVENT_ID")
 
 
 
