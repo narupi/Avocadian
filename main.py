@@ -1,10 +1,32 @@
-import os
-from avocadian import Avocadian
-from googlecalendar import GoogleCalendar
+import discord
+from discord.ext import commands
+import traceback 
+import configparser
 
-TOKEN = os.environ["DISCORD_API_TOKEN"]
-calendar = GoogleCalendar()
-calendar.add_event("A","bB", "C", "2020-04-04", "2020-05-01")
 
-#client = Avocadian(calendar)
-#client.run(TOKEN)
+BOT_COGS = [
+    'cogs.debugCmd',
+    'cogs.calendarCmd'
+
+]
+
+class Avocadian(commands.Bot):
+    def __init__(self, command_prefix):
+        super().__init__(command_prefix)
+
+        for cog in BOT_COGS:
+            try:
+                self.load_extension(cog)
+            except Exception:
+                traceback.print_exc()
+
+    async def on_ready(self):
+        print('Logged on as', self.user)
+
+if __name__ == '__main__':
+    inifile = configparser.ConfigParser()
+    inifile.read('config.ini')
+    TOKEN = inifile.get('DISCORD_API_TOKEN', 'token')
+
+    bot = Avocadian(command_prefix='/')
+    bot.run(TOKEN) 
