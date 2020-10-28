@@ -21,7 +21,7 @@ class Avocadian(commands.Bot):
                 traceback.print_exc()
 
     async def on_ready(self):
-        print('BOT起動')
+        print('Logged on as', self.user)
 
 if __name__ == '__main__':
     inifile = configparser.ConfigParser()
