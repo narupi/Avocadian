@@ -4,3 +4,4 @@ bot/
 .idea
 credentials.json
 config.ini
+backup/

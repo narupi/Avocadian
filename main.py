@@ -5,7 +5,7 @@ import configparser
 
 
 BOT_COGS = [
-    'cogs.debugCmd',
+    'cogs.utilCmd',
     'cogs.calendarCmd'
 
 ]
